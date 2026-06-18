@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Форма обращения</title>
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #c8cdd0;
+    display: flex;
+    min-height: 100vh;
+    color: #333;
+  }
+
+  .sidebar {
+    width: 60px;
+    background-color: #2b4a6e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 10px;
+    flex-shrink: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 10;
+  }
+
+  .sidebar-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 8px;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .sidebar-icon.active {
+    background-color: #4a8fd4;
+  }
+
+  .sidebar-icon.blue {
+    background-color: #4a8fd4;
+  }
+
+  .sidebar-icon.dark {
+    background-color: #3a6a9a;
+  }
+
+  .sidebar-icon.gray {
+    background-color: #5a7a9a;
+  }
+
+  .sidebar-icon.light {
+    background-color: #6a8aaa;
+  }
+
+  .sidebar-spacer {
+    flex: 1;
+  }
+
+  .main-content {
+    margin-left: 60px;
+    flex: 1;
+    padding: 20px 40px 40px 40px;
+    max-width: 900px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 24px 28px 28px 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e8e8e8;
+    margin-bottom: 20px;
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #4a5568;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .card-cancel {
+    font-size: 13px;
+    color: #a0a0a0;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    background: none;
+    border: none;
+    font-family: inherit;
+  }
+
+  .card-cancel:hover {
+    color: #777;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+    position: relative;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 14px;
+    color: #8a9199;
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+
+  .form-label .required {
+    color: #e53e3e;
+    margin-left: 1px;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #d4d8dc;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #333;
+    font-family: inherit;
+    background: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus {
+    border-color: #7eb8e0;
+    box-shadow: 0 0 0 1px #7eb8e0;
+  }
+
+  .form-input::placeholder {
+    color: #b0b5b9;
+  }
+
+  textarea.form-input {
+    resize: vertical;
+    min-height: 120px;
+    line-height: 1.5;
+  }
+
+  /* Custom Select */
+  .custom-select-wrapper {
+    position: relative;
+  }
+
+  .custom-select-trigger {
+    width: 100%;
+    padding: 12px 40px 12px 14px;
+    border: 1px solid #d4d8dc;
+    border-radius: 6px;
+    font-size: 15px;
+    color: #333;
+    font-family: inherit;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    transition: border-color 0.2s;
+  }
+
+  .custom-select-trigger:hover {
+    border-color: #b0b5b9;
+  }
+
+  .custom-select-trigger.open {
+    border-color: #7eb8e0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .custom-select-trigger.placeholder-text {
+    color: #b0b5b9;
+  }
+
+  .custom-select-trigger::after {
+    content: '';
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 12px;
+    height: 8px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  .custom-select-trigger.open::after {
+    transform: translateY(-50%) rotate(180deg);
+  }
+
+  .custom-select-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border: 1px solid #d4d8dc;
+    border-top: none;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    z-index: 100;
+    max-height: 260px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .custom-select-dropdown.open {
+    display: block;
+  }
+
+  .custom-select-option {
+    padding: 10px 14px;
+    font-size: 15px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.15s;
+  }
+
+  .custom-select-option:hover {
+    background-color: #f0f4f8;
+  }
+
+  .custom-select-option.selected {
+    background-color: #2b6cb0;
+    color: #fff;
+  }
+
+  .custom-select-option.selected:hover {
+    background-color: #2b6cb0;
+  }
+
+  .custom-select-dropdown::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  .custom-select-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  .custom-select-dropdown::-webkit-scrollbar-thumb {
+    background: #c0c0c0;
+    border-radius: 4px;
+  }
+
+  .custom-select-dropdown::-webkit-scrollbar-thumb:hover {
+    background: #a0a0a0;
+  }
+
+  .date-display {
+    font-size: 16px;
+    color: #333;
+    padding: 4px 0;
+    font-weight: 400;
+  }
+
+  .date-display em {
+    font-style: italic;
+    color: #8a9199;
+    font-size: 14px;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+  }
+
+  .overlay.active {
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="sidebar">
+  <div class="sidebar-icon blue">✕</div>
+  <div class="sidebar-icon dark">↓</div>
+  <div class="sidebar-icon dark">↗</div>
+  <div class="sidebar-icon dark">🔗</div>
+  <div class="sidebar-icon gray">K</div>
+  <div class="sidebar-icon gray">O</div>
+  <div class="sidebar-icon gray">✓</div>
+  <div class="sidebar-icon light"></div>
+  <div class="sidebar-icon light">📋</div>
+  <div class="sidebar-icon light"></div>
+  <div class="sidebar-icon light">👤</div>
+  <div class="sidebar-icon light">СК</div>
+  <div class="sidebar-icon light"></div>
+  <div class="sidebar-icon light">⚙</div>
+</div>
+
+<div class="main-content">
+
+  <!-- ОБ ЭЛЕМЕНТЕ -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Об элементе</span>
+      <button class="card-cancel">Отменить</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Описание обращения<span class="required">*</span></label>
+      <textarea class="form-input" autofocus></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Тип обращения<span class="required">*</span></label>
+      <div class="custom-select-wrapper" data-select="tip-obrashcheniya">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+          <div class="custom-select-option" data-value="obrashchenie">Обращение</div>
+          <div class="custom-select-option" data-value="zhaloba">Жалоба</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Повторное обращение</label>
+      <div class="custom-select-wrapper" data-select="povtornoe-obrashchenie">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+          <div class="custom-select-option" data-value="da">Да</div>
+          <div class="custom-select-option" data-value="net">Нет</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Контактный номер телефона<span class="required">*</span></label>
+      <input type="text" class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Округ<span class="required">*</span></label>
+      <div class="custom-select-wrapper" data-select="okrug">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+          <div class="custom-select-option" data-value="vostochny">Восточный</div>
+          <div class="custom-select-option" data-value="yuzhny">Южный</div>
+          <div class="custom-select-option" data-value="zapadny">Западный</div>
+          <div class="custom-select-option" data-value="severo-zapadny">Северо-западный</div>
+          <div class="custom-select-option" data-value="severo-vostochny">Северо-восточный</div>
+          <div class="custom-select-option" data-value="yugo-zapadny">Юго-западный</div>
+          <div class="custom-select-option" data-value="yugo-vostochny">Юго-восточный</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ОБРАЩЕНИЕ -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Обращение</span>
+      <button class="card-cancel">Отменить</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Тематика обращения</label>
+      <div class="custom-select-wrapper" data-select="tematika-obrashcheniya">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+          <div class="custom-select-option" data-value="ab">Наличие/ Доставка АБ</div>
+          <div class="custom-select-option" data-value="tsr">Наличие/ доставка ТСР(кроме АБ)</div>
+          <div class="custom-select-option" data-value="prokat">Прокат ТСР/Паллиатив</div>
+          <div class="custom-select-option" data-value="mte">МТЭ</div>
+          <div class="custom-select-option" data-value="poi">ПОИ</div>
+          <div class="custom-select-option" data-value="blagodarnost">Благодарность</div>
+          <div class="custom-select-option" data-value="vstrecha">Встреча с директором</div>
+          <div class="custom-select-option" data-value="ppi">ППИ (подъемные платформы и потолки)</div>
+          <div class="custom-select-option" data-value="lk">Личный кабинет на сайте</div>
+          <div class="custom-select-option" data-value="matkap">Материнский капитал</div>
+          <div class="custom-select-option" data-value="drugoe">Другое</div>
+          <div class="custom-select-option" data-value="studench">Запись на прием в ПВ Студенческая, 42</div>
+          <div class="custom-select-option" data-value="zhulebinsky">Запись на прием в ПВ Жулебинский, 40, корп.1</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Комментарий (по обращению)</label>
+      <textarea class="form-input"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" style="font-style:italic;">Дата создания обращения</label>
+      <div class="date-display" id="creation-date"></div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Желаемый месяц обеспечения</label>
+      <div class="custom-select-wrapper" data-select="mesyats-obespecheniya">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown" id="months-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Источник обращения</label>
+      <div class="custom-select-wrapper" data-select="istochnik-obrashcheniya">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+          <div class="custom-select-option" data-value="1-liniya">1 линия</div>
+          <div class="custom-select-option" data-value="lichno">Лично</div>
+          <div class="custom-select-option" data-value="mosru">портал Mos.ru</div>
+          <div class="custom-select-option" data-value="gsi">ГСИ</div>
+          <div class="custom-select-option" data-value="max">Мессенджер MAX</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ЖАЛОБА -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Жалоба</span>
+      <button class="card-cancel">Отменить</button>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Тема жалобы</label>
+      <div class="custom-select-wrapper" data-select="tema-zhaloby">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+          <div class="custom-select-option" data-value="ne-dostavili-ab">Не доставили АБ в день доставки</div>
+          <div class="custom-select-option" data-value="izmenenie">Изменение/ уточнение заказа</div>
+          <div class="custom-select-option" data-value="dostavili-ne-vse">Доставили не все</div>
+          <div class="custom-select-option" data-value="ne-tot-razmer">Доставили не тот размер/ вид АБ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Эмоциональный уровень</label>
+      <div class="custom-select-wrapper" data-select="emotsionalny-uroven">
+        <div class="custom-select-trigger placeholder-text" data-value="">не выбрано</div>
+        <div class="custom-select-dropdown">
+          <div class="custom-select-option selected" data-value="">не выбрано</div>
+          <div class="custom-select-option" data-value="spokoino">Спокойно-положительный</div>
+          <div class="custom-select-option" data-value="vozmustenie">Возмущение без повышения голоса – отрицательный</div>
+          <div class="custom-select-option" data-value="negodovanie">Негодование и повышение голоса – негативный</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Комментарий (по жалобе)</label>
+      <textarea class="form-input"></textarea>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Массивы для форматирования даты
+  const monthNamesGenitive = [
+    'января', 'февраля', 'марта', 'апреля', 'мая', 'июня',
+    'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'
+  ];
+
+  const monthNamesNominative = [
+    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+  ];
+
+  // Установка даты создания обращения
+  function setCreationDate() {
+    const now = new Date();
+    const day = now.getDate();
+    const month = monthNamesGenitive[now.getMonth()];
+    const year = now.getFullYear();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('creation-date').textContent = day + ' ' + month + ' ' + year + ' ' + hours + ':' + minutes;
+  }
+
+  // Заполнение выпадающего списка месяцев (прошлый, текущий, следующий)
+  function populateMonthsDropdown() {
+    const now = new Date();
+    const currentMonth = now.getMonth(); // 0-11
+
+    const prevMonth = (currentMonth - 1 + 12) % 12;
+    const nextMonth = (currentMonth + 1) % 12;
+
+    const months = [
+      { value: prevMonth, label: monthNamesNominative[prevMonth] },
+      { value: currentMonth, label: monthNamesNominative[currentMonth] },
+      { value: nextMonth, label: monthNamesNominative[nextMonth] }
+    ];
+
+    const dropdown = document.getElementById('months-dropdown');
+    // Оставляем только "не выбрано"
+    dropdown.innerHTML = '<div class="custom-select-option selected" data-value="">не выбрано</div>';
+
+    months.forEach(m => {
+      const option = document.createElement('div');
+      option.className = 'custom-select-option';
+      option.setAttribute('data-value', m.value);
+      option.textContent = m.label;
+      dropdown.appendChild(option);
+    });
+  }
+
+  // Инициализация при загрузке
+  setCreationDate();
+  populateMonthsDropdown();
+
+  // Обновление даты каждую минуту
+  setInterval(setCreationDate, 60000);
+
+  // Custom select логика
+  document.addEventListener('DOMContentLoaded', function() {
+    const overlay = document.getElementById('overlay');
+    const wrappers = document.querySelectorAll('.custom-select-wrapper');
+
+    wrappers.forEach(wrapper => {
+      const trigger = wrapper.querySelector('.custom-select-trigger');
+      const dropdown = wrapper.querySelector('.custom-select-dropdown');
+      const options = wrapper.querySelectorAll('.custom-select-option');
+
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const isOpen = dropdown.classList.contains('open');
+
+        closeAllDropdowns();
+
+        if (!isOpen) {
+          dropdown.classList.add('open');
+          trigger.classList.add('open');
+          overlay.classList.add('active');
+        }
+      });
+
+      options.forEach(option => {
+        option.addEventListener('click', function(e) {
+          e.stopPropagation();
+          const value = this.getAttribute('data-value');
+          const text = this.textContent;
+
+          options.forEach(opt => opt.classList.remove('selected'));
+          this.classList.add('selected');
+
+          trigger.textContent = text;
+          trigger.setAttribute('data-value', value);
+
+          if (value === '') {
+            trigger.classList.add('placeholder-text');
+          } else {
+            trigger.classList.remove('placeholder-text');
+          }
+
+          closeAllDropdowns();
+        });
+      });
+    });
+
+    overlay.addEventListener('click', closeAllDropdowns);
+
+    function closeAllDropdowns() {
+      document.querySelectorAll('.custom-select-dropdown').forEach(d => d.classList.remove('open'));
+      document.querySelectorAll('.custom-select-trigger').forEach(t => t.classList.remove('open'));
+      overlay.classList.remove('active');
+    }
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.custom-select-wrapper')) {
+        closeAllDropdowns();
+      }
+    });
+  });
+</script>
+
+</body>
+</html>
